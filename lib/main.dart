@@ -190,7 +190,46 @@ class _MilkSubscriptionScreenState extends State<MilkSubscriptionScreen> {
     );
   }
 
-  Widget planCard(String title, String subtitle) {
+Widget planCard(String title, String subtitle) {
     final isSelected = selectedPlan == title;
     return Card(
-      color: isSelected ? Colors.green.shade50 : null
+      color: isSelected ? Colors.green.shade50 : null,
+      child: ListTile(
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(subtitle),
+        trailing: isSelected
+            ? const Icon(Icons.check_circle, color: Colors.green)
+            : const Icon(Icons.radio_button_unchecked),
+        onTap: () => _selectPlan(title),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Milk Subscription")),
+      body: ListView(
+        padding: const EdgeInsets.all(15),
+        children: [
+          const Text("Choose a Plan",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          planCard("Basic", "₹36/day · ₹960/month"),
+          planCard("Family", "₹38/day · ₹990/month"),
+          planCard("Premium", "₹40/day · ₹1,080/month · Free delivery"),
+          const SizedBox(height: 20),
+          const Text("Products",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          product("Half Litre Milk", "₹36", Icons.local_drink),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: _proceed,
+            child: const Text("Proceed"),
+          ),
+        ],
+      ),
+    );
+  }
+}
