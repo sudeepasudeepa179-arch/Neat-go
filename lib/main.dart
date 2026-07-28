@@ -21,65 +21,140 @@ class NeatGoApp extends StatelessWidget {
   }
 }
 
+// ---------------- SHARED IMAGE WIDGET ----------------
+
+class ProductImage extends StatelessWidget {
+  final String url;
+  final IconData fallbackIcon;
+  final double size;
+  final double radius;
+
+  const ProductImage({
+    super.key,
+    required this.url,
+    required this.fallbackIcon,
+    this.size = 64,
+    this.radius = 12,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(radius),
+      child: Image.network(
+        url,
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, progress) {
+          if (progress == null) return child;
+          return Container(
+            width: size,
+            height: size,
+            color: Colors.green.shade50,
+            child: const Center(
+              child: SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            width: size,
+            height: size,
+            color: Colors.green.shade50,
+            child: Icon(fallbackIcon, color: Colors.green, size: size * 0.5),
+          );
+        },
+      ),
+    );
+  }
+}
+
 // ---------------- PRODUCT DATA ----------------
 
 class ProductData {
+  // Picsum is a stable, reliable free photo service - each seed always
+  // returns the same real photograph, so images load consistently.
+  static String _img(String seed) =>
+      "https://picsum.photos/seed/${Uri.encodeComponent(seed)}/500/500";
+
   static final Map<String, List<Map<String, dynamic>>> byCategory = {
     "Dairy & Milk": [
-      {"name": "Cow Milk", "price": 55.0, "icon": Icons.local_drink, "unit": "1L"},
-      {"name": "Buffalo Milk", "price": 70.0, "icon": Icons.local_drink, "unit": "1L"},
-      {"name": "A2 Cow Milk", "price": 95.0, "icon": Icons.local_drink, "unit": "1L"},
-      {"name": "Toned Milk", "price": 48.0, "icon": Icons.local_drink, "unit": "1L"},
-      {"name": "Full Cream Milk", "price": 60.0, "icon": Icons.local_drink, "unit": "1L"},
-      {"name": "Curd", "price": 40.0, "icon": Icons.egg, "unit": "500g"},
-      {"name": "Paneer", "price": 90.0, "icon": Icons.restaurant, "unit": "200g"},
-      {"name": "Butter", "price": 55.0, "icon": Icons.breakfast_dining, "unit": "100g"},
-      {"name": "Cheese", "price": 120.0, "icon": Icons.lunch_dining, "unit": "200g"},
-      {"name": "Ghee", "price": 650.0, "icon": Icons.local_fire_department, "unit": "500ml"},
+      {"name": "Cow Milk", "price": 55.0, "icon": Icons.local_drink, "unit": "1L", "image": _img("neatgo-cow-milk")},
+      {"name": "Buffalo Milk", "price": 70.0, "icon": Icons.local_drink, "unit": "1L", "image": _img("neatgo-buffalo-milk")},
+      {"name": "A2 Cow Milk", "price": 95.0, "icon": Icons.local_drink, "unit": "1L", "image": _img("neatgo-a2-milk")},
+      {"name": "Toned Milk", "price": 48.0, "icon": Icons.local_drink, "unit": "1L", "image": _img("neatgo-toned-milk")},
+      {"name": "Full Cream Milk", "price": 60.0, "icon": Icons.local_drink, "unit": "1L", "image": _img("neatgo-cream-milk")},
+      {"name": "Curd", "price": 40.0, "icon": Icons.egg, "unit": "500g", "image": _img("neatgo-curd")},
+      {"name": "Paneer", "price": 90.0, "icon": Icons.restaurant, "unit": "200g", "image": _img("neatgo-paneer")},
+      {"name": "Butter", "price": 55.0, "icon": Icons.breakfast_dining, "unit": "100g", "image": _img("neatgo-butter")},
+      {"name": "Cheese", "price": 120.0, "icon": Icons.lunch_dining, "unit": "200g", "image": _img("neatgo-cheese")},
+      {"name": "Ghee", "price": 650.0, "icon": Icons.local_fire_department, "unit": "500ml", "image": _img("neatgo-ghee")},
     ],
     "Grocery": [
-      {"name": "Basmati Rice", "price": 180.0, "icon": Icons.rice_bowl, "unit": "5kg"},
-      {"name": "Toor Dal", "price": 140.0, "icon": Icons.grain, "unit": "1kg"},
-      {"name": "Sunflower Oil", "price": 165.0, "icon": Icons.opacity, "unit": "1L"},
-      {"name": "Wheat Atta", "price": 220.0, "icon": Icons.bakery_dining, "unit": "5kg"},
-      {"name": "Sugar", "price": 48.0, "icon": Icons.icecream, "unit": "1kg"},
-      {"name": "Tea Powder", "price": 95.0, "icon": Icons.emoji_food_beverage, "unit": "250g"},
-      {"name": "Onions", "price": 35.0, "icon": Icons.eco, "unit": "1kg"},
-      {"name": "Tomatoes", "price": 40.0, "icon": Icons.eco, "unit": "1kg"},
+      {"name": "Basmati Rice", "price": 180.0, "icon": Icons.rice_bowl, "unit": "5kg", "image": _img("neatgo-basmati-rice")},
+      {"name": "Toor Dal", "price": 140.0, "icon": Icons.grain, "unit": "1kg", "image": _img("neatgo-toor-dal")},
+      {"name": "Sunflower Oil", "price": 165.0, "icon": Icons.opacity, "unit": "1L", "image": _img("neatgo-sunflower-oil")},
+      {"name": "Wheat Atta", "price": 220.0, "icon": Icons.bakery_dining, "unit": "5kg", "image": _img("neatgo-wheat-atta")},
+      {"name": "Sugar", "price": 48.0, "icon": Icons.icecream, "unit": "1kg", "image": _img("neatgo-sugar")},
+      {"name": "Tea Powder", "price": 95.0, "icon": Icons.emoji_food_beverage, "unit": "250g", "image": _img("neatgo-tea-powder")},
+      {"name": "Onions", "price": 35.0, "icon": Icons.eco, "unit": "1kg", "image": _img("neatgo-onions")},
+      {"name": "Tomatoes", "price": 40.0, "icon": Icons.eco, "unit": "1kg", "image": _img("neatgo-tomatoes")},
+      {"name": "Potatoes", "price": 30.0, "icon": Icons.eco, "unit": "1kg", "image": _img("neatgo-potatoes")},
+      {"name": "Green Chillies", "price": 20.0, "icon": Icons.eco, "unit": "250g", "image": _img("neatgo-chillies")},
+      {"name": "Carrots", "price": 45.0, "icon": Icons.eco, "unit": "1kg", "image": _img("neatgo-carrots")},
+      {"name": "Spinach", "price": 25.0, "icon": Icons.eco, "unit": "1 bunch", "image": _img("neatgo-spinach")},
     ],
     "Fashion": [
-      {"name": "Men's T-Shirt", "price": 399.0, "icon": Icons.checkroom, "unit": "1 pc"},
-      {"name": "Women's Kurti", "price": 599.0, "icon": Icons.checkroom, "unit": "1 pc"},
-      {"name": "Denim Jeans", "price": 899.0, "icon": Icons.checkroom, "unit": "1 pc"},
-      {"name": "Sports Shoes", "price": 1299.0, "icon": Icons.hiking, "unit": "1 pair"},
-      {"name": "Formal Shirt", "price": 699.0, "icon": Icons.checkroom, "unit": "1 pc"},
-      {"name": "Sandals", "price": 449.0, "icon": Icons.hiking, "unit": "1 pair"},
+      {"name": "Men's T-Shirt", "price": 399.0, "icon": Icons.checkroom, "unit": "1 pc", "image": _img("neatgo-mens-tshirt")},
+      {"name": "Women's Kurti", "price": 599.0, "icon": Icons.checkroom, "unit": "1 pc", "image": _img("neatgo-womens-kurti")},
+      {"name": "Denim Jeans", "price": 899.0, "icon": Icons.checkroom, "unit": "1 pc", "image": _img("neatgo-denim-jeans")},
+      {"name": "Sports Shoes", "price": 1299.0, "icon": Icons.hiking, "unit": "1 pair", "image": _img("neatgo-sports-shoes")},
+      {"name": "Formal Shirt", "price": 699.0, "icon": Icons.checkroom, "unit": "1 pc", "image": _img("neatgo-formal-shirt")},
+      {"name": "Sandals", "price": 449.0, "icon": Icons.hiking, "unit": "1 pair", "image": _img("neatgo-sandals")},
     ],
     "Electronics": [
-      {"name": "Wireless Earbuds", "price": 1499.0, "icon": Icons.headphones, "unit": "1 pc"},
-      {"name": "Power Bank 10000mAh", "price": 999.0, "icon": Icons.battery_charging_full, "unit": "1 pc"},
-      {"name": "USB Cable", "price": 149.0, "icon": Icons.cable, "unit": "1 pc"},
-      {"name": "LED Bulb", "price": 99.0, "icon": Icons.lightbulb, "unit": "1 pc"},
-      {"name": "Bluetooth Speaker", "price": 1799.0, "icon": Icons.speaker, "unit": "1 pc"},
-      {"name": "Phone Charger", "price": 349.0, "icon": Icons.power, "unit": "1 pc"},
+      {"name": "Wireless Earbuds", "price": 1499.0, "icon": Icons.headphones, "unit": "1 pc", "image": _img("neatgo-earbuds")},
+      {"name": "Power Bank 10000mAh", "price": 999.0, "icon": Icons.battery_charging_full, "unit": "1 pc", "image": _img("neatgo-powerbank")},
+      {"name": "USB Cable", "price": 149.0, "icon": Icons.cable, "unit": "1 pc", "image": _img("neatgo-usbcable")},
+      {"name": "LED Bulb", "price": 99.0, "icon": Icons.lightbulb, "unit": "1 pc", "image": _img("neatgo-ledbulb")},
+      {"name": "Bluetooth Speaker", "price": 1799.0, "icon": Icons.speaker, "unit": "1 pc", "image": _img("neatgo-speaker")},
+      {"name": "Phone Charger", "price": 349.0, "icon": Icons.power, "unit": "1 pc", "image": _img("neatgo-charger")},
     ],
     "Pharmacy": [
-      {"name": "Paracetamol Strip", "price": 25.0, "icon": Icons.medication, "unit": "10 tab"},
-      {"name": "Hand Sanitizer", "price": 89.0, "icon": Icons.sanitizer, "unit": "200ml"},
-      {"name": "Face Masks (Pack)", "price": 149.0, "icon": Icons.masks, "unit": "50 pcs"},
-      {"name": "Vitamin C Tablets", "price": 199.0, "icon": Icons.medication_liquid, "unit": "30 tab"},
-      {"name": "First Aid Kit", "price": 349.0, "icon": Icons.medical_services, "unit": "1 kit"},
-      {"name": "Thermometer", "price": 249.0, "icon": Icons.thermostat, "unit": "1 pc"},
+      {"name": "Paracetamol Strip", "price": 25.0, "icon": Icons.medication, "unit": "10 tab", "image": _img("neatgo-paracetamol")},
+      {"name": "Hand Sanitizer", "price": 89.0, "icon": Icons.sanitizer, "unit": "200ml", "image": _img("neatgo-sanitizer")},
+      {"name": "Face Masks (Pack)", "price": 149.0, "icon": Icons.masks, "unit": "50 pcs", "image": _img("neatgo-facemasks")},
+      {"name": "Vitamin C Tablets", "price": 199.0, "icon": Icons.medication_liquid, "unit": "30 tab", "image": _img("neatgo-vitaminc")},
+      {"name": "First Aid Kit", "price": 349.0, "icon": Icons.medical_services, "unit": "1 kit", "image": _img("neatgo-firstaid")},
+      {"name": "Thermometer", "price": 249.0, "icon": Icons.thermostat, "unit": "1 pc", "image": _img("neatgo-thermometer")},
+      {"name": "Cough Syrup", "price": 110.0, "icon": Icons.medication, "unit": "100ml", "image": _img("neatgo-coughsyrup")},
+      {"name": "Band-Aid Pack", "price": 45.0, "icon": Icons.healing, "unit": "20 pcs", "image": _img("neatgo-bandaid")},
     ],
     "Food": [
-      {"name": "Veg Biryani", "price": 180.0, "icon": Icons.rice_bowl, "unit": "1 plate"},
-      {"name": "Paneer Butter Masala", "price": 220.0, "icon": Icons.dinner_dining, "unit": "1 bowl"},
-      {"name": "Masala Dosa", "price": 90.0, "icon": Icons.breakfast_dining, "unit": "1 pc"},
-      {"name": "Chicken Roll", "price": 150.0, "icon": Icons.fastfood, "unit": "1 pc"},
-      {"name": "Cold Coffee", "price": 99.0, "icon": Icons.icecream, "unit": "1 glass"},
-      {"name": "Veg Sandwich", "price": 79.0, "icon": Icons.lunch_dining, "unit": "1 pc"},
+      {"name": "Veg Biryani", "price": 180.0, "icon": Icons.rice_bowl, "unit": "1 plate", "image": _img("neatgo-biryani")},
+      {"name": "Paneer Butter Masala", "price": 220.0, "icon": Icons.dinner_dining, "unit": "1 bowl", "image": _img("neatgo-panner-masala")},
+      {"name": "Masala Dosa", "price": 90.0, "icon": Icons.breakfast_dining, "unit": "1 pc", "image": _img("neatgo-dosa")},
+      {"name": "Chicken Roll", "price": 150.0, "icon": Icons.fastfood, "unit": "1 pc", "image": _img("neatgo-chickenroll")},
+      {"name": "Cold Coffee", "price": 99.0, "icon": Icons.icecream, "unit": "1 glass", "image": _img("neatgo-coldcoffee")},
+      {"name": "Veg Sandwich", "price": 79.0, "icon": Icons.lunch_dining, "unit": "1 pc", "image": _img("neatgo-sandwich")},
+      {"name": "Idli Sambar", "price": 70.0, "icon": Icons.breakfast_dining, "unit": "1 plate", "image": _img("neatgo-idli")},
+      {"name": "Butter Naan", "price": 45.0, "icon": Icons.bakery_dining, "unit": "1 pc", "image": _img("neatgo-naan")},
     ],
   };
+
+  static Map<String, dynamic>? findByName(String name) {
+    for (final list in byCategory.values) {
+      for (final p in list) {
+        if (p["name"] == name) return p;
+      }
+    }
+    return null;
+  }
 }
 
 // ---------------- LOGIN ----------------
@@ -106,7 +181,10 @@ class _LoginScreenState extends State<LoginScreen> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (_) => RootScreen(userName: nameController.text.trim()),
+        builder: (_) => RootScreen(
+          userName: nameController.text.trim(),
+          userPhone: phoneController.text.trim(),
+        ),
       ),
     );
   }
@@ -130,7 +208,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 4),
               const Text(
-                "Groceries, food, fashion & more — delivered fast",
+                "Groceries, food, fashion & more â€” delivered fast",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.grey),
               ),
@@ -173,7 +251,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
 class RootScreen extends StatefulWidget {
   final String userName;
-  const RootScreen({super.key, required this.userName});
+  final String userPhone;
+  const RootScreen({super.key, required this.userName, required this.userPhone});
 
   @override
   State<RootScreen> createState() => _RootScreenState();
@@ -185,13 +264,13 @@ class _RootScreenState extends State<RootScreen> {
   final List<Map<String, dynamic>> cart = [];
   final Set<String> wishlist = {};
 
-  void addToCart(String name, double price, IconData icon) {
+  void addToCart(String name, double price, IconData icon, String image) {
     final existing = cart.indexWhere((item) => item["name"] == name);
     setState(() {
       if (existing >= 0) {
         cart[existing]["qty"]++;
       } else {
-        cart.add({"name": name, "price": price, "qty": 1, "icon": icon});
+        cart.add({"name": name, "price": price, "qty": 1, "icon": icon, "image": image});
       }
     });
     ScaffoldMessenger.of(context).showSnackBar(
@@ -243,7 +322,7 @@ class _RootScreenState extends State<RootScreen> {
         onUpdateQty: updateQty,
         total: cartTotal,
       ),
-      ProfileTab(userName: widget.userName),
+      ProfileTab(userName: widget.userName, userPhone: widget.userPhone),
     ];
 
     return Scaffold(
@@ -274,7 +353,7 @@ class _RootScreenState extends State<RootScreen> {
 
 class HomeTab extends StatelessWidget {
   final String userName;
-  final void Function(String, double, IconData) onAddToCart;
+  final void Function(String, double, IconData, String) onAddToCart;
   final Set<String> wishlist;
   final void Function(String) onToggleWishlist;
 
@@ -299,7 +378,7 @@ class HomeTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Hi, $userName 👋"),
+        title: Text("Hi, $userName ðŸ‘‹"),
       ),
       body: ListView(
         padding: const EdgeInsets.all(15),
@@ -320,7 +399,11 @@ class HomeTab extends StatelessWidget {
           Container(
             height: 110,
             decoration: BoxDecoration(
-              color: Colors.green.shade50,
+              gradient: LinearGradient(
+                colors: [Colors.green.shade100, Colors.green.shade50],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               borderRadius: BorderRadius.circular(16),
             ),
             padding: const EdgeInsets.all(16),
@@ -396,11 +479,11 @@ class HomeTab extends StatelessWidget {
   }
 }
 
-// ---------------- CATEGORY / PRODUCT LIST (shared by all categories) ----------------
+// ---------------- CATEGORY / PRODUCT LIST ----------------
 
 class CategoryScreen extends StatefulWidget {
   final String categoryTitle;
-  final void Function(String, double, IconData) onAddToCart;
+  final void Function(String, double, IconData, String) onAddToCart;
   final Set<String> wishlist;
   final void Function(String) onToggleWishlist;
 
@@ -434,43 +517,58 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 final price = p["price"] as double;
                 final icon = p["icon"] as IconData;
                 final unit = p["unit"] as String;
+                final image = p["image"] as String;
                 final inWishlist = widget.wishlist.contains(name);
 
                 return Card(
-                  child: ListTile(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => ProductDetailScreen(
-                            name: name,
-                            price: price,
-                            icon: icon,
-                            unit: unit,
-                            category: widget.categoryTitle,
-                            onAddToCart: widget.onAddToCart,
-                            inWishlist: inWishlist,
-                            onToggleWishlist: widget.onToggleWishlist,
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ProductDetailScreen(
+                              name: name,
+                              price: price,
+                              icon: icon,
+                              unit: unit,
+                              image: image,
+                              category: widget.categoryTitle,
+                              onAddToCart: widget.onAddToCart,
+                              inWishlist: inWishlist,
+                              onToggleWishlist: widget.onToggleWishlist,
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                    leading: Icon(icon, color: Colors.green, size: 30),
-                    title: Text(name),
-                    subtitle: Text("₹${price.toStringAsFixed(0)} · $unit"),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: Icon(inWishlist ? Icons.favorite : Icons.favorite_border,
-                              color: inWishlist ? Colors.red : null),
-                          onPressed: () => setState(() => widget.onToggleWishlist(name)),
-                        ),
-                        ElevatedButton(
-                          onPressed: () => widget.onAddToCart(name, price, icon),
-                          child: const Text("Add"),
-                        ),
-                      ],
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          ProductImage(url: image, fallbackIcon: icon, size: 64),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                                const SizedBox(height: 4),
+                                Text("â‚¹${price.toStringAsFixed(0)} Â· $unit",
+                                    style: TextStyle(color: Colors.grey.shade700)),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(inWishlist ? Icons.favorite : Icons.favorite_border,
+                                color: inWishlist ? Colors.red : null),
+                            onPressed: () => setState(() => widget.onToggleWishlist(name)),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => widget.onAddToCart(name, price, icon, image),
+                            child: const Text("Add"),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -487,8 +585,9 @@ class ProductDetailScreen extends StatefulWidget {
   final double price;
   final IconData icon;
   final String unit;
+  final String image;
   final String category;
-  final void Function(String, double, IconData) onAddToCart;
+  final void Function(String, double, IconData, String) onAddToCart;
   final bool inWishlist;
   final void Function(String) onToggleWishlist;
 
@@ -498,6 +597,7 @@ class ProductDetailScreen extends StatefulWidget {
     required this.price,
     required this.icon,
     required this.unit,
+    required this.image,
     required this.category,
     required this.onAddToCart,
     required this.inWishlist,
@@ -540,14 +640,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
-              child: Container(
-                height: 160,
-                width: 160,
-                decoration: BoxDecoration(
-                  color: Colors.green.shade50,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(widget.icon, size: 70, color: Colors.green),
+              child: ProductImage(
+                url: widget.image,
+                fallbackIcon: widget.icon,
+                size: 220,
+                radius: 20,
               ),
             ),
             const SizedBox(height: 24),
@@ -555,7 +652,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             const SizedBox(height: 6),
             Text(widget.category, style: const TextStyle(color: Colors.grey)),
             const SizedBox(height: 12),
-            Text("₹${widget.price.toStringAsFixed(0)} · ${widget.unit}",
+            Text("â‚¹${widget.price.toStringAsFixed(0)} Â· ${widget.unit}",
                 style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green)),
             const SizedBox(height: 20),
             Row(
@@ -582,11 +679,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
                 onPressed: () {
                   for (int i = 0; i < quantity; i++) {
-                    widget.onAddToCart(widget.name, widget.price, widget.icon);
+                    widget.onAddToCart(widget.name, widget.price, widget.icon, widget.image);
                   }
                   Navigator.pop(context);
                 },
-                child: Text("Add $quantity to Cart · ₹${(widget.price * quantity).toStringAsFixed(0)}"),
+                child: Text("Add $quantity to Cart Â· â‚¹${(widget.price * quantity).toStringAsFixed(0)}"),
               ),
             ),
           ],
@@ -601,7 +698,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 class WishlistTab extends StatelessWidget {
   final Set<String> wishlist;
   final void Function(String) onToggleWishlist;
-  final void Function(String, double, IconData) onAddToCart;
+  final void Function(String, double, IconData, String) onAddToCart;
 
   const WishlistTab({
     super.key,
@@ -619,13 +716,38 @@ class WishlistTab extends StatelessWidget {
           : ListView(
               padding: const EdgeInsets.all(15),
               children: wishlist.map((name) {
+                final p = ProductData.findByName(name);
+                final price = (p?["price"] as double?) ?? 0.0;
+                final icon = (p?["icon"] as IconData?) ?? Icons.shopping_bag;
+                final image = (p?["image"] as String?) ?? "";
+
                 return Card(
-                  child: ListTile(
-                    leading: const Icon(Icons.favorite, color: Colors.red),
-                    title: Text(name),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete_outline),
-                      onPressed: () => onToggleWishlist(name),
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Row(
+                      children: [
+                        ProductImage(url: image, fallbackIcon: icon, size: 60),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                              const SizedBox(height: 4),
+                              Text("â‚¹${price.toStringAsFixed(0)}", style: TextStyle(color: Colors.grey.shade700)),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.add_shopping_cart, color: Colors.green),
+                          onPressed: () => onAddToCart(name, price, icon, image),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete_outline),
+                          onPressed: () => onToggleWishlist(name),
+                        ),
+                      ],
                     ),
                   ),
                 );
@@ -664,13 +786,28 @@ class CartTab extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final item = cart[index];
                       return Card(
-                        child: ListTile(
-                          leading: Icon(item["icon"], color: Colors.green),
-                          title: Text(item["name"]),
-                          subtitle: Text("₹${item["price"]} x ${item["qty"]}"),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
+                        margin: const EdgeInsets.only(bottom: 10),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Row(
                             children: [
+                              ProductImage(
+                                url: item["image"] as String? ?? "",
+                                fallbackIcon: item["icon"] as IconData,
+                                size: 60,
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(item["name"], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                                    const SizedBox(height: 4),
+                                    Text("â‚¹${item["price"]} x ${item["qty"]}",
+                                        style: TextStyle(color: Colors.grey.shade700)),
+                                  ],
+                                ),
+                              ),
                               IconButton(
                                 icon: const Icon(Icons.remove_circle_outline),
                                 onPressed: () => onUpdateQty(item["name"], -1),
@@ -696,7 +833,7 @@ class CartTab extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text("Total", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          Text("₹${total.toStringAsFixed(0)}",
+                          Text("â‚¹${total.toStringAsFixed(0)}",
                               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                         ],
                       ),
@@ -750,7 +887,7 @@ class CheckoutScreen extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.receipt_long),
               title: const Text("Order total"),
-              subtitle: Text("₹${total.toStringAsFixed(0)}"),
+              subtitle: Text("â‚¹${total.toStringAsFixed(0)}"),
             ),
             const SizedBox(height: 30),
             ElevatedButton(
@@ -759,8 +896,8 @@ class CheckoutScreen extends StatelessWidget {
                 showDialog(
                   context: context,
                   builder: (_) => AlertDialog(
-                    title: const Text("Order Placed 🎉"),
-                    content: Text("Your order of ₹${total.toStringAsFixed(0)} has been placed successfully."),
+                    title: const Text("Order Placed ðŸŽ‰"),
+                    content: Text("Your order of â‚¹${total.toStringAsFixed(0)} has been placed successfully."),
                     actions: [
                       TextButton(
                         onPressed: () {
@@ -785,7 +922,8 @@ class CheckoutScreen extends StatelessWidget {
 
 class ProfileTab extends StatelessWidget {
   final String userName;
-  const ProfileTab({super.key, required this.userName});
+  final String userPhone;
+  const ProfileTab({super.key, required this.userName, required this.userPhone});
 
   @override
   Widget build(BuildContext context) {
@@ -801,10 +939,13 @@ class ProfileTab extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(userName, textAlign: TextAlign.center, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          Text(userPhone, textAlign: TextAlign.center, style: const TextStyle(color: Colors.grey)),
           const SizedBox(height: 20),
           const Divider(),
           const ListTile(leading: Icon(Icons.receipt_long), title: Text("Order History")),
           const ListTile(leading: Icon(Icons.location_on_outlined), title: Text("Saved Addresses")),
+          const ListTile(leading: Icon(Icons.payment), title: Text("Payment Methods")),
           const ListTile(leading: Icon(Icons.help_outline), title: Text("Help & Support")),
           const Divider(),
           ListTile(
